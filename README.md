@@ -16,7 +16,7 @@
 - You can refer index.php for sample code to implement the Mailer.php
 
 
-## For Use as an API Service please refer */api* with below sample JSON
+## For Use as an API Service please refer */api* and below sample request JSON
 ```
 {
   "selected_api": "sendgrid",
