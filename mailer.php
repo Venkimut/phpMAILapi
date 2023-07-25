@@ -1,5 +1,6 @@
 <?php
-require '/vendor/autoload.php';
+require './vendor/autoload.php';
+require './env.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use SendGrid\Mail\Mail;
@@ -7,7 +8,7 @@ use Mailgun\Mailgun;
 
 class Mailer
 {
-    private $mailer;
+    public $mailer;
     
 
     public function __construct(string $mailer = 'phpmailer')
@@ -16,7 +17,7 @@ class Mailer
         // Constructor initializes the selected mailer library
         switch ($mailer) {
             case 'phpmailer':
-                $this->mailer = new PHPMailer();
+                $this->mailer = new PHPMailer(true);
                 break;
             case 'sendgrid':
                 $this->mailer = new Mail();
@@ -34,11 +35,14 @@ class Mailer
         // Method to set SMTP authentication for PHPMailer library
         if ($this->mailer instanceof PHPMailer) {
             $this->mailer->isSMTP();
+            $this->mailer->SMTPDebug = true;
             $this->mailer->Host = $host;
             $this->mailer->Port = $port;
             $this->mailer->SMTPAuth = true;
             $this->mailer->Username = $username;
             $this->mailer->Password = $password;
+            $this->mailer->setFrom($username);
+
         } else {
             throw new RuntimeException('SMTP authentication is not supported by this mailer.');
         }
@@ -97,16 +101,17 @@ class Mailer
         try {
             if ($this->mailer instanceof PHPMailer) {
                 // Sending email using PHPMailer
+                
                 return $this->mailer->send();
             } elseif ($this->mailer instanceof Mail) {
                 // Sending email using SendGrid
-                $sendGrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+                $sendGrid = new \SendGrid(SENDGRID_API_KEY);
                 $response = $sendGrid->send($this->mailer);
                 return $response->statusCode() === 202;
             } elseif ($this->mailer instanceof Mailgun) {
                 // Sending email using Mailgun
-                $this->mailer->setApiKey(getenv('MAILGUN_API_KEY'));
-                $this->mailer->setDomain(getenv('MAILGUN_DOMAIN'));
+                $this->mailer->setApiKey(MAILGUN_API_KEY);
+                $this->mailer->setDomain(MAILGUN_DOMAIN);
                 $this->mailer->send();
                 return true;
             }
