@@ -1,6 +1,4 @@
-## For Import Mailer Class to the existing application.
-
-### Add env.php as below with credentials and extend the class in mailer.php
+### Add env.php as below with credentials
 ```
 <?php 
     define("SMTP_SERVER", "XXXXXXXXXXXX");
@@ -13,7 +11,9 @@
     define("MAILGUN_DOMAIN", "XXXXXXXXX");
 ?>
 ```
-### You can refer index.php for sample code to implement the Mailer.php
+## For Import Mailer Class to the existing application.
+- Import mailer.php and extend the class *Mailer* in mailer.php
+- You can refer index.php for sample code to implement the Mailer.php
 
 
 ## For Use as an API Service please refer */api* with below sample JSON
